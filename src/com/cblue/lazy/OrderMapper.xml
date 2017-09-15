@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cblue.lazy.OrderMapper">
+   <!-- 延迟加载的resultMap -->
+   <resultMap type="com.cblue.lazy.Orders" id="OrderUserResultMapLazy">
+       <!-- 配置映射的订单信息 -->
+          <!-- id标签：查询列的唯一表示 。如果多个列，就用多个id，配置唯一标识-->
+           <id column="id" property="id"/>
+         <!-- result标签：一般属性 -->
+           <result column="user_id" property="userid"/>
+           <result column="number" property="number"/>
+           <result column="createdate" property="createdate"/>
+           <result column="note" property="note"/>
+       <!-- 用户信息延迟加载 
+            select:指定延迟加载执行的sql语句，这里是select的id
+                    引用之前根据id查询用户信息，namespace+select的id
+            column：订单信息中关联用户查询的列，是user_id
+       -->
+       <association property="user" javaType="com.cblue.entity.User" 
+        select="com.cblue.mapper.UserMapper.findUserById" column="user_id">
+	   </association>   
+   </resultMap>
+   
+   <select id="findOrderUserLazy" resultMap="OrderUserResultMapLazy">
+     select * from  orders
+   </select>
+
+       
+       
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cblue.onetomany.OrderMapper">
+   
+   <resultMap type="com.cblue.onetomany.Orders" id="OrderAndOrderDetailResultMap">
+       <!-- 配置映射的订单信息 -->
+          <!-- id标签：查询列的唯一表示 。如果多个列，就用多个id，配置唯一标识-->
+           <id column="id" property="id"/>
+         <!-- result标签：一般属性 -->
+           <result column="user_id" property="userid"/>
+           <result column="number" property="number"/>
+           <result column="createdate" property="createdate"/>
+           <result column="note" property="note"/>
+       <!-- 订单详情信息 -->
+       <!-- 
+         collection(集合) 一般映射多条对象信息
+         property 主映射对象（orders）中多条对象信息的属性名
+         ofType 多条对象信息的pojo的类型
+         
+        -->
+        <collection property="orderDetails" ofType="com.cblue.onetomany.OrderDetail">
+            <id column="orderdetail_id" property="id"/>
+           <result column="orders_id" property="ordersId"/>
+           <result column="product_id" property="productId"/>
+           <result column="product_num" property="productNum"/>
+        </collection>
+   
+   </resultMap>
+   
+   
+   
+   <select id="findOrderAndOrderDetail" resultMap="OrderAndOrderDetailResultMap">
+      SELECT orders.* ,orderdetail.id orderdetail_id,orderdetail.orders_id,orderdetail.product_id,orderdetail.product_num 
+               FROM orders,orderdetail 
+               WHERE orders.id=orderdetail.orders_id
+   </select>
+
+       
+       
+</mapper>

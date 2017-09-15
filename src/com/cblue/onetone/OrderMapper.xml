@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cblue.onetone.OrderMapper">
+
+	<!-- 使用resultMap实现查询结果映射 -->
+	<resultMap type="com.cblue.onetone.Orders" id="orderUserResultMap">
+		<!-- 配置映射的订单信息 -->
+		<!-- id标签：查询列的唯一表示 。如果多个列，就用多个id，配置唯一标识 -->
+		<id column="id" property="id" />
+		<!-- result标签：一般属性 -->
+		<result column="user_id" property="userid" />
+		<result column="number" property="number" />
+		<result column="createdate" property="createdate" />
+		<result column="note" property="note" />
+
+		<!-- 配置映射的用户信息 -->
+		<!-- association(联合)，一般映射单个对象信息,这里一般是外键关联信息 property标签：属性名字 javaType标签：属性类型 -->
+		<association property="user" javaType="com.cblue.onetone.User">
+			<id column="user_id" property="id" />
+			<result column="username" property="username" />
+			<result column="sex" property="sex" />
+			<result column="address" property="address" />
+		</association>
+
+	</resultMap>
+
+	<select id="getOrderUserByResultMap" resultMap="orderUserResultMap">
+		select
+		orders.*,user.username,user.sex,user.address from orders,user where
+		orders.user_id=user.id
+	</select>
+
+
+
+</mapper>

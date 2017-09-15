@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cblue.mapper.UserMapper">
+     <!-- 
+        输入映射  
+     -->
+     <!-- 传入基本数据类型 -->
+     <select id="findUserById" parameterType="int" resultType="com.cblue.entity.User" >
+        select * from user where id=#{id}
+     </select>
+     <!-- 传入pojo类型 -->
+      <insert id="insertUser" parameterType="com.cblue.entity.User" >
+	    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+	        select last_insert_id()
+	    </selectKey>
+	     insert into user (username,birthday,sex,address) values(#{username},#{birthday},#{sex},#{address})
+       </insert>
+      <!-- 传入包装类型 --> 
+       <select id="findUserByPack" parameterType="com.cblue.entity.UserCustom" resultType="com.cblue.entity.User">
+          select * from user where sex =#{user.sex}
+       </select>
+       
+       <!-- 
+          输出映射
+        -->
+       <!-- 输出单个pojo类型 -->
+       <!-- 输出集合pojo类型 -->
+       <!-- 输出简单数据类型 -->
+       <select id="findUserCount" resultType="int">
+          select count(*) from user
+       </select>
+       <!-- 投影部分字段 -->
+       <select id="findUserPart" parameterType="int" resultType="com.cblue.entity.User">
+         select username,sex from user where id=#{id}
+       </select>
+        <!-- 使用别名 -->
+       <select id="findUserAlias" parameterType="int" resultType="com.cblue.entity.User">
+         select id _id,username _username,birthday _birthday,sex _sex,address _address from user where id=#{id}
+       </select>
+       <!-- 使用resultMap -->
+    <!-- 
+          id resultMap的唯一标识
+          type 是最终映射的pojo类型
+        -->
+       <resultMap type="com.cblue.entity.User" id="userResultMap">
+             <!-- 
+                id 映射结果的唯一标识  
+                   column 数据表的字段名
+                   property pojo对象的属性名
+              -->
+            <id column="_id" property="id"/>
+            <!-- 
+                result 一般属性
+             -->
+            <result column="_username" property="username"/>
+            <result column="_brithday" property="brithday"/>
+            <result column="_sex" property="sex"/>
+            <result column="_address" property="address"/>
+       </resultMap>
+   
+       <select id="findUserResultMap" parameterType="int" resultMap="userResultMap">
+         select id _id,username _username,birthday _birthday,sex _sex,address _address from user where id=#{id}
+       </select>
+       
+       
+       <!-- 
+         动态sql
+        -->
+        <select id="findUserByCondition" parameterType="com.cblue.entity.UserCustom" resultType="com.cblue.entity.User">
+          select * from user where  username like '%${user.username}%' and sex=#{user.sex}
+        </select>
+        
+        
+        <select id="findUserByCondition1" parameterType="com.cblue.entity.UserCustom" resultType="com.cblue.entity.User">
+          select * from user 
+          <!-- where标签相当于where关键字，where标签会把第一个and去掉 -->
+          <where>
+	          <if test="user!=null">
+	             <if test="user.username!=null and user.username!=''">
+	               and username like '%${user.username}%'
+	             </if>
+	             <if test="user.sex!=null and user.sex!=''">
+	               and sex=#{user.sex}
+	             </if>
+	          </if> 
+          </where>
+        </select>
+        
+        
+       <!-- 
+         语句片段
+       -->
+       <sql id="user_where_condition">
+            <if test="user!=null">
+	             <if test="user.username!=null and user.username!=''">
+	               and username like '%${user.username}%'
+	             </if>
+	             <if test="user.sex!=null and user.sex!=''">
+	               and sex=#{user.sex}
+	             </if>
+	          </if> 
+       </sql>
+       
+        <select id="findUserByCondition2" parameterType="com.cblue.entity.UserCustom" resultType="com.cblue.entity.User">
+          select * from user 
+          <!-- where标签相当于where关键字，where标签会把第一个and去掉 -->
+          <where>
+              <!-- 引用语句片段
+                  refid  语句判断的id
+               -->
+	           <include refid="user_where_condition"></include>
+          </where>
+        </select>
+        
+        <!-- 
+        foreach
+         -->
+         <sql id="foreach_id">
+            <!-- 
+              执行语句：select * from user where id in(1,2,3);
+              collection 输入映射的迭代属性名
+              open 循环开始的字符串
+              close 循环结束的字符串
+              item 迭代出的单个对象
+              separator 循环中对象的间隔
+             -->
+            <foreach collection="ids" open="id in (" close=")" item="id" separator=",">
+                  #{id}
+            </foreach>
+         </sql>
+         
+          <select id="findUserByCondition3" parameterType="com.cblue.entity.UserCustom" resultType="com.cblue.entity.User">
+          select * from user 
+          <where>
+	           <include refid="foreach_id"></include>
+          </where>
+        </select>
+        
+       
+        
+        
+    
+       
+       
+       
+       
+       
+</mapper>

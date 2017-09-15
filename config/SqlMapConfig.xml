@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 全局配置参数 -->
+	<settings>
+		<!-- 延迟加载总开关 -->
+		<setting name="lazyLoadingEnabled" value="true" />	
+		<!-- 设置按需加载 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!-- 开启二级缓存 -->
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+
+   <!-- 定义 别名 -->
+	<typeAliases>
+		<package name="cn.cblue"/>
+	</typeAliases>
+
+    <!-- 和spring整合后 environments环境配置将废除，spring来管理数据源-->
+    <environments default="development">
+        <environment id="development">
+        <!-- 使用jdbc事务管理,事务控制由mybatis管理-->
+            <transactionManager type="JDBC" />
+        <!-- 数据库连接池,由mybatis管理-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis?characterEncoding=utf-8" />
+                <property name="username" value="root" />
+                <property name="password" value="root" />
+            </dataSource>
+        </environment>
+    </environments>
+<!-- 加载映射文件 -->
+    <mappers>
+        <!-- <mapper resource="mapper/User.xml"/> -->
+        <!-- <mapper resource="mapper/UserMapper.xml"/> -->
+        <package name="com.cblue.mapper"/>
+      <!--   <package name="com.cblue.onetone"/> -->
+       <!--  <package name="com.cblue.onetomany"/> -->
+         <!-- <package name="com.cblue.manytomany"/> -->
+         <!-- <package name="com.cblue.lazy"/> -->
+         <package name="com.cblue.cache"/>
+    </mappers>
+    
+    
+</configuration>

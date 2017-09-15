@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cblue.manytomany.UserMapper">
+    
+       <!-- 
+         使用resultMap实现多对多
+        -->
+       <resultMap type="com.cblue.manytomany.User" id="userProductResultMap">
+            <!-- 用户信息 -->
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="brithday" property="brithday"/>
+            <result column="sex" property="sex"/>
+            <result column="address" property="address"/>
+            <!-- 订单信息 
+              一个对多
+            -->
+            <collection property="orderList" ofType="com.cblue.manytomany.Orders">
+               <id column="orders_id" property="id"/>
+               <result column="number" property="number"/>
+               <result column="orders_createdate" property="createdate"/>
+               <result column="note" property="note"/>
+               <!-- 订单详情信息 
+                 一对多
+               -->
+               <collection property="orderDetails" ofType="com.cblue.manytomany.OrderDetail">
+                  <id column="orderdetail_id" property="id"/>
+                  <result column="orders_id" property="ordersId"/>
+                  <result column="product_id" property="productId"/>
+                  <result column="product_number" property="productNum"/>
+                  <!-- 
+                     商品信息
+                     一对以
+                   -->
+                   <association property="product" javaType="com.cblue.manytomany.Product">
+                       <id column="product_id" property="id"/>
+                       <result column="name" property="name"/>
+                       <result column="price" property="price"/>
+                       <result column="pic" property="pic"/>
+                       <result column="detail" property="detail"/>
+                        <result column="product_createtime" property="createtime"/>
+                   </association>
+               </collection>
+            </collection>
+              
+       </resultMap>
+   
+       <select id="findUserProductResultMap" resultMap="userProductResultMap">
+       SELECT  user.*, orders.id orders_id,orders.number,orders.createtime orders_createtime,orders.note,
+               orderdetail.id orderdetail_id,orderdetail.product_num,
+              product.id product_id,product.name,product.price,product.pic,product.detail,product.createtime  product_createtime
+            FROM USER,orders,orderdetail,product  
+             WHERE orders.user_id=user.id AND orderdetail.orders_id=orders.id AND orderdetail.product_id = product.id
+       </select>
+  
+       
+</mapper>
